@@ -150,9 +150,12 @@ class DateHandler {
   }
 
   static isCalculatableDate() {
+    /// /////// BBJ
     const currentDate = this.getCurrentUTCDate();
     const hours = currentDate.getHours();
-    return hours < 15 || hours >= 20;
+    // return hours < 6 || hours >= 12;
+    return false;
+    /// /////// BBJ
   }
 
   static getTomorrow() {
