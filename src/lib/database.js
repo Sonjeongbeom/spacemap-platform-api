@@ -7,7 +7,7 @@ class DataBase {
     return mongoose.connect(process.env.MONGO_INFO, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
-      dbName: 'SPACEMAP-PLATFORM-JB',
+      dbName: 'SPACEMAP-PLATFORM',
     });
   }
 }
