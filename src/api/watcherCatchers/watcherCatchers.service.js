@@ -4,8 +4,6 @@
 // const WatcherCatchersModel = require('./watcherCatchers.model');
 const { default: mongoose } = require('mongoose');
 const { Mutex } = require('async-mutex');
-const Cesium = require('cesium');
-const moment = require('moment');
 const {
   WatcherCatchersModel,
   WatcherCatchersTaskModel,
@@ -17,6 +15,8 @@ const {
   HttpException,
 } = require('../../common/exceptions');
 const WatcherCatchersHandler = require('../../lib/watcherCatcher-handler');
+const Cesium = require('cesium');
+const moment = require('moment');
 
 class WatcherCatchersService {
   /** @param { WcdbService } wcdbService */
@@ -85,14 +85,12 @@ class WatcherCatchersService {
     email,
     latitude,
     longitude,
-    altitude,
-    fieldOfView,
     epochTime,
-    endTime,
     predictionEpochTime,
     threshold,
   ) {
-    const position = Cesium.Cartesian3.fromDegrees(longitude, latitude);
+    const position = await this.degreesToCartesian3(longitude, latitude);
+    console.log(position);
     epochTime = new Date(epochTime);
     const result = await WatcherCatchersModel.create({
       email,
@@ -101,11 +99,8 @@ class WatcherCatchersService {
       localX: position.x,
       localY: position.y,
       localZ: position.z,
-      altitude,
-      fieldOfView,
       status: 'PENDING',
       epochTime,
-      endTime,
       predictionEpochTime,
       threshold,
     });
@@ -133,12 +128,9 @@ class WatcherCatchersService {
         remoteInputFilePath,
         remoteOutputFilePath,
         epochTime,
-        endTime,
         position.x,
         position.y,
         position.z,
-        altitude,
-        fieldOfView,
       );
     });
 
@@ -167,13 +159,13 @@ class WatcherCatchersService {
     );
   }
 
-  // async degreesToCartesian3(longitude, latitude) {
-  //   console.log(longitude, latitude);
-  //   longitude = Number(longitude);
-  //   latitude = Number(latitude);
-  //   console.log(longitude, latitude);
-  //   const position = Cesium.Cartesian3.fromDegrees(longitude, latitude);
-  //   return position;
-  // }
+  async degreesToCartesian3(longitude, latitude) {
+    console.log(longitude, latitude);
+    longitude = Number(longitude);
+    latitude = Number(latitude);
+    console.log(longitude, latitude);
+    const position = Cesium.Cartesian3.fromDegrees(longitude, latitude);
+    return position;
+  }
 }
 module.exports = WatcherCatchersService;
