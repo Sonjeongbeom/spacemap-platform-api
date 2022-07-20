@@ -76,3 +76,9 @@ class InterestedSatellitesTask {
 }
 
 module.exports = InterestedSatellitesTask;
+
+/* ISSUES
+ * forEach, map ??
+ * .exec()
+ * subscrive는 왜 __v 밑에?
+ */

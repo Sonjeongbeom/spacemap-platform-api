@@ -127,7 +127,7 @@ class DateHandler {
       moment(launchEpochTime).isSameOrBefore(moment(endMoment))
     )
       return true;
-    return false;
+    return false; // 이게 true로 되어있었음
   }
 
   static async diffSeconds(launchEpochTime) {

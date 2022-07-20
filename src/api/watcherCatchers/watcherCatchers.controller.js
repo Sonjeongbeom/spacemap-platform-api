@@ -57,33 +57,24 @@ class WatcherCatchersController {
   }
 
   async predictWatcherCatchers(req, _res) {
+    // console.log('?');
+
     if (!DateHandler.isCalculatableDate()) {
       throw new ForbiddenException('Not available time.');
     }
-    const { email } = req.user;
-    // const email = '2018008168@hanyang.ac.kxr';
+    const { email } = req.user || { email: 'contact@spacemap42.com' };
 
     const startMomentOfPredictionWindow =
       await DateHandler.getStartMomentOfPredictionWindow();
 
-    const threshold = 50; // km
-    const { longitude, latitude, altitude, fieldOfView, epochTime, endTime } =
-      req.body;
-    // const latitude = '127';
-    // const longitude = '37';
-    // const altitude = 2000;
-    // const fieldOfView = 50;
-    // const epochTime = new Date();
-    // const endTime = new Date('2022-07-20T06:03:26.583Z');
-
+    const threshold = 50; //km
+    const { longitude, latitude, epochTime } = req.body;
+    console.log(req.body);
     const taskId = await this.watcherCatchersService.enqueTask(
       email,
-      Number(latitude),
-      Number(longitude),
-      altitude,
-      fieldOfView,
+      latitude,
+      longitude,
       epochTime,
-      endTime,
       startMomentOfPredictionWindow,
       threshold,
     );
