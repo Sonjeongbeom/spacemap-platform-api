@@ -1,7 +1,8 @@
+const moment = require('moment');
+const DateHandler = require('./date-handler');
 const EngineCommand = require('./engine-command');
 const SftpHandler = require('./sftp-handler');
 const SshHandler = require('./ssh-handler');
-const moment = require('moment');
 
 class WatcherCatchersHandler {
   static async putParametersRemoteServer(
@@ -9,9 +10,12 @@ class WatcherCatchersHandler {
     remoteInputFilePath,
     remoteOutputFilePath,
     epochTime,
+    endTime,
     x,
     y,
     z,
+    altitude,
+    fieldOfView,
   ) {
     const sshHandler = new SshHandler();
     const sftpHandler = new SftpHandler();
@@ -24,9 +28,12 @@ class WatcherCatchersHandler {
     const paramtersText = await this.makeParametersToText(
       remoteInputFilePath,
       epochTime,
+      endTime,
       x,
       y,
       z,
+      altitude,
+      fieldOfView,
       remoteOutputFilePath,
     );
     const putFileResult = await sshHandler.writeTextToFile(
@@ -45,9 +52,12 @@ class WatcherCatchersHandler {
   static async makeParametersToText(
     remoteFilePath,
     epochTime,
+    endTime,
     x,
     y,
     z,
+    altitude,
+    fieldOfView,
     remoteOutputFilePath,
   ) {
     const juliaPath =
@@ -55,6 +65,7 @@ class WatcherCatchersHandler {
     // let epochTimeOfWatchWindow = [year, month, date, hours, minutes, seconds];
     console.log(epochTime);
     epochTime = moment(epochTime);
+    endTime = moment(endTime);
     console.log(epochTime);
     const year = epochTime.year();
     const month = epochTime.month() + 1;
@@ -62,11 +73,11 @@ class WatcherCatchersHandler {
     const hours = epochTime.hours();
     const minutes = epochTime.minutes();
     const seconds = epochTime.seconds();
-    const watchWindowLength = 3600; //sec
-    const altitude = 2000; //km
-    const inteferenceRadius = 100; //km
-    const cameraAngle = 50; //deg
-    const timeIncrement = 10; //sec
+    const watchWindowLength = endTime.diff(epochTime, 'seconds'); // sec
+    // const altitude = altitude; // km
+    const inteferenceRadius = 100; // km
+    const cameraAngle = fieldOfView; // deg
+    const timeIncrement = 10; // sec
     console.log(
       `${remoteFilePath} 
         ${juliaPath}
@@ -125,3 +136,15 @@ class WatcherCatchersHandler {
 }
 
 module.exports = WatcherCatchersHandler;
+
+/* ISSUES
+ * forEach, map ??
+ * .exec()
+ * subscrive는 왜 __v 밑에?
+ *
+ * unlink는 위험한 코드 아닐까..?
+ * slash in filename -> underscore보다 hyphen이 나을 것 같기도 하고,,
+ * api 수정 (인자 세개 더 : altitude, endTime, cameraAngle)
+ * model에 추가
+ * 빈스톡에서 ssh와 sftp가 없어서 s3로 바꿀수도?
+ */
